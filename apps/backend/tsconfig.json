@@ -1,11 +1,17 @@
 {
-  "extends": "@repo/typescript-config/nextjs.json",
   "compilerOptions": {
-    "plugins": [
-      {
-        "name": "express"
-      }
-    ]
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "baseUrl": "./", 
+    "paths": {
+      "@/*": ["src/*"],
+      "*": ["node_modules/*"]
+    }
   },
   "include": [
     "next-env.d.ts",

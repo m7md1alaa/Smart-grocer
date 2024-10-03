@@ -1,14 +1,27 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
+import dotenv from 'dotenv';
+import rootRouter from "./index";
 
-export const startApp = () => {
+
+dotenv.config();
+
+const createApp = () => {
   const app = express();
+  app.use(express.json());
+  app.use("/api", rootRouter);
+  
 
-  // Example route
-  app.get('/', (req, res) => {
-    res.send('Backend is running...');
+  app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
   });
 
-  const PORT = process.env.PORT || 5000;
+  return app;
+};
+
+export const startApp = () => {
+  const app = createApp();
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
