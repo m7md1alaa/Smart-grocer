@@ -1,13 +1,15 @@
-import { Router, Request, Response } from "express";
-import { startApp } from "./app"; // Import startApp
+import { Router } from "express";
+import storesRouter from "./routes/stores/stores";
+import productsRouter from "./routes/products/products";
+import pricesRouter from "./routes/prices/prices";
 
+// Create a new router instance
 const rootRouter: Router = Router();
 
-// Example route
-rootRouter.get("/example", (req: Request, res: Response) => {
-  res.send("This is an example route.");
-});
+// Mount subrouters under respective paths
+rootRouter.use(storesRouter);   // /stores routes
+rootRouter.use(productsRouter); // /products routes
+rootRouter.use(pricesRouter);   // /prices routes
 
+// Export the rootRouter for use in app.ts
 export default rootRouter;
-
-startApp();
