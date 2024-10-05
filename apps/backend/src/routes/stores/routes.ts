@@ -45,21 +45,23 @@ storesRouter
     }
   });
 
-storesRouter.route("/:id").get(async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    const store = await prisma.store.findUnique({
-      where: { StoreId: Number(id) },
-    });
-
-    if (!store) {
-      res.status(404).json({ message: `Store with ID ${id} not found.` });
+  storesRouter.route("/:id").get(async (req: Request, res: Response) => {
+    try {
+      const { id } = req.params;
+      const store = await prisma.store.findUnique({
+        where: { StoreId: +id },
+      });
+  
+      if (!store) {
+        res.status(404).json({ message: `Store with ID ${id} not found.` });
+      } else {
+        res.json({ message: `Details of store with ID ${id}`, data: store });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Error fetching store" });
     }
-
-    res.json({ message: `Details of store with ID ${id}`, data: store });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error fetching store" });
-  }
-});
+  });
+  
+  
 export default storesRouter;
