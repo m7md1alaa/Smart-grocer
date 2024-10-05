@@ -13,43 +13,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Stores {
-  StoreId   Int        @id @default(autoincrement())
+model Store {
+  StoreId   Int                 @id @default(autoincrement())
   StoreName String
-  address   String?
-  Products  Products[] // One-to-many relation with Products
-  Prices    Prices[]
+  Products  StoreProductPrice[] // Relation through join table to associate products with prices
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
 }
 
-model Products {
-  ProductId     Int                  @id @default(autoincrement())
-  ProductTitle  String
-  description   String?
-  Barcodes      Barcodes[] // Relation to Barcodes model
-  Prices        Prices[] // Relation to Prices model for different stores
-  categories    ProductsOnCategory[] // Many-to-many relation through ProductsOnCategory
-  createdAt     DateTime             @default(now())
-  updatedAt     DateTime             @updatedAt
-  Stores        Stores?              @relation(fields: [storesStoreId], references: [StoreId])
-  storesStoreId Int?
+model Product {
+  ProductId    Int                  @id @default(autoincrement())
+  ProductTitle String
+  description  String?
+  barcode      String?              @unique // Barcode directly on the product
+  categories   ProductsOnCategory[] // Many-to-many relation through ProductsOnCategory
+  Stores       StoreProductPrice[] // Relation through join table to associate stores with prices
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 }
 
-model Prices {
-  PriceId   Int      @id @default(autoincrement())
-  price     Float // Price for the product
-  storeId   Int // Foreign key to Stores
-  Store     Stores   @relation(fields: [storeId], references: [StoreId])
-  productId Int // Foreign key to Products
-  Product   Products @relation(fields: [productId], references: [ProductId])
+model StoreProductPrice {
+  id        Int      @id @default(autoincrement())
+  price     Float // Price for the product in this specific store
+  Store     Store    @relation(fields: [storeId], references: [StoreId])
+  storeId   Int
+  Product   Product  @relation(fields: [productId], references: [ProductId])
+  productId Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Barcodes {
-  BarcodeId Int      @id @default(autoincrement())
-  barcode   String   @unique // Barcode for scanning
-  productId Int // Foreign key to Products
-  Product   Products @relation(fields: [productId], references: [ProductId])
 }
 
 model Category {
@@ -61,7 +52,7 @@ model Category {
 model ProductsOnCategory {
   productId  Int
   categoryId Int
-  Product    Products @relation(fields: [productId], references: [ProductId], onDelete: Cascade)
+  Product    Product  @relation(fields: [productId], references: [ProductId], onDelete: Cascade)
   Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id([productId, categoryId]) // Composite primary key

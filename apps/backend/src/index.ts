@@ -1,15 +1,13 @@
+// index.ts
 import { Router } from "express";
-import storesRouter from "./routes/stores/stores";
-import productsRouter from "./routes/products/products";
-import pricesRouter from "./routes/prices/prices";
+
+import productsRouter from "./routes/products/routes";
+import storesRouter from "./routes/stores/routes";
 
 // Create a new router instance
 const rootRouter: Router = Router();
 
-// Mount subrouters under respective paths
-rootRouter.use(storesRouter);   // /stores routes
-rootRouter.use(productsRouter); // /products routes
-rootRouter.use(pricesRouter);   // /prices routes
+rootRouter.use(storesRouter);
+rootRouter.use(productsRouter);
 
-// Export the rootRouter for use in app.ts
 export default rootRouter;

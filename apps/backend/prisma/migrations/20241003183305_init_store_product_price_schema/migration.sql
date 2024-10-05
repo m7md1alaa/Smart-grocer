@@ -36,7 +36,6 @@ CREATE TABLE "Barcodes" (
     "BarcodeId" SERIAL NOT NULL,
     "barcode" TEXT NOT NULL,
     "productId" INTEGER NOT NULL,
-
     CONSTRAINT "Barcodes_pkey" PRIMARY KEY ("BarcodeId")
 );
 
