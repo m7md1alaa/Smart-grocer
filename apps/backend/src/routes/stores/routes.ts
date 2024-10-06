@@ -11,11 +11,15 @@ storesRouter
   .route("/")
   .get(async (req: Request, res: Response) => {
     try {
-      const stores = await prisma.store.findMany();
+      const stores = await prisma.store.findMany({
+        include: {
+          Products: true,
+        },
+      });
       if (stores.length === 0) {
         res.status(404).json({ message: "No stores found." });
       } else {
-        res.json({ message: "List of all stores", data: stores });
+        res.status(200).json({ message: "List of all stores", data: stores });
       }
     } catch (error) {
       console.error(error);
@@ -45,23 +49,53 @@ storesRouter
     }
   });
 
-  storesRouter.route("/:id").get(async (req: Request, res: Response) => {
+storesRouter
+  .route("/:id")
+  .get(async (req: Request, res: Response) => {
     try {
       const { id } = req.params;
       const store = await prisma.store.findUnique({
         where: { StoreId: +id },
       });
-  
+
       if (!store) {
         res.status(404).json({ message: `Store with ID ${id} not found.` });
       } else {
-        res.json({ message: `Details of store with ID ${id}`, data: store });
+        res
+          .status(200)
+          .json({ message: `Details of store with ID ${id}`, data: store });
       }
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Error fetching store" });
     }
+  })
+  .delete(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+
+      // Await the result of the deletion
+      const store = await prisma.store.delete({
+        where: { StoreId: +id },
+      });
+
+      if (!store) {
+        res.status(404).json({ message: `Store with ID ${id} not found.` });
+      } else {
+        res.status(200).json({
+          message: `The store with ID ${id} deleted successfully`,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle specific Prisma errors such as not finding the store
+      if (error === "P2025") {
+        // Prisma error for 'Record not found'
+        res.status(404).json({ message: `Store with ID ${id} not found.` });
+      } else {
+        res.status(500).json({ message: "Error deleting store" });
+      }
+    }
   });
-  
-  
+
 export default storesRouter;
