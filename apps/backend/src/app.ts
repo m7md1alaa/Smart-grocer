@@ -1,7 +1,8 @@
 import express from 'express';
 import { errorHandler } from './middlewares/errorHandler';
-import storesRouter from './routes/stores/routes';
+
 import productsRouter from './routes/products/routes';
+import storesRouter from './routes/stores/routes';
 
 const createApp = () => {
   const app = express();
