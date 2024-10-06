@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { Router, Request, Response } from "express";
 import { StoreCreateSchema } from "./zod.schema";
 import * as z from "zod";
@@ -70,10 +70,39 @@ storesRouter
       res.status(500).json({ message: "Error fetching store" });
     }
   })
+  .put(async (req: Request, res: Response) => {
+    const { id } = req.params;
+    try {
+      // Validate request body data
+      const validatedData = StoreCreateSchema.parse(req.body);
+
+      // Attempt to update the store
+      const store = await prisma.store.update({
+        where: { StoreId: +id },
+        data: validatedData,
+      });
+
+      // If the store was successfully updated, return success response
+      res
+        .status(200)
+        .json({ message: `Details of store with ID ${id}`, data: store });
+    } catch (error: any) {
+      console.error(error);
+
+      // Check if the error is a PrismaClientKnownRequestError and has a 'P2025' code
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        res.status(404).json({ message: `Store with ID ${id} not found.` });
+      } else {
+        res.status(500).json({ message: "Error updating store" });
+      }
+    }
+  })
   .delete(async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
-
       // Await the result of the deletion
       const store = await prisma.store.delete({
         where: { StoreId: +id },
