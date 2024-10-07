@@ -1,8 +1,8 @@
-import express from 'express';
-import { errorHandler } from './middlewares/errorHandler';
+import express from "express";
+import { errorHandler } from "./middlewares/errorHandler";
 
-import productsRouter from './routes/products/routes';
-import storesRouter from './routes/stores/routes';
+import productsRouter from "./routes/products/routes";
+import storesRouter from "./routes/stores/routes";
 
 const createApp = () => {
   const app = express();
@@ -11,8 +11,8 @@ const createApp = () => {
   app.use(express.json());
 
   // Register routes
-  app.use('/api/stores', storesRouter);
-  app.use('/api/products', productsRouter);
+  app.use("/api/stores", storesRouter);
+  app.use("/api/products", productsRouter);
 
   // Global error handler
   app.use(errorHandler);
