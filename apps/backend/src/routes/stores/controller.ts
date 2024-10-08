@@ -46,6 +46,7 @@ export const getStoreById = async (req: Request, res: Response) => {
 };
 
 export const createStore = async (req: Request, res: Response) => {
+  
   try {
     const validatedData = StoreCreateSchema.parse(req.body);
 
@@ -65,6 +66,7 @@ export const createStore = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ message: "Error creating store" });
   }
+  
 };
 export const updateStore = async (req: Request, res: Response) => {
   const { id } = req.params;
